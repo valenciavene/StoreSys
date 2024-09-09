@@ -7,6 +7,7 @@ import numpy as np
 from pyzbar.pyzbar import decode
 from dotenv import load_dotenv
 import os
+import asyncio
 
 # Load environment variables from .env file
 load_dotenv()
@@ -40,12 +41,13 @@ def scan_qr(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('No QR code found.')
 
 def main() -> None:
-    updater = Updater(BOT_TOKEN)
+    update_queue = asyncio.Queue()
+    updater = Updater(BOT_TOKEN, update_queue=update_queue)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CallbackQueryHandler(button))
-    dispatcher.add_handler(MessageHandler(Filters.photo, scan_qr))
+    dispatcher.add_handler(MessageHandler(filters.PHOTO, scan_qr))
 
     updater.start_polling()
     updater.idle()
