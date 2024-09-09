@@ -47,8 +47,7 @@ async def main() -> None:
     application.add_handler(CallbackQueryHandler(button))
     application.add_handler(MessageHandler(filters.PHOTO, scan_qr))
 
-    await application.start_polling()
-    await application.idle()
+    application.run_polling()
 
 if __name__ == '__main__':
     asyncio.run(main())
