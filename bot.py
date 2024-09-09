@@ -1,5 +1,5 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, CallbackContext
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, CallbackContext
 import telegram.ext.filters as filters
 import requests
 import cv2
@@ -40,17 +40,15 @@ def scan_qr(update: Update, context: CallbackContext) -> None:
     else:
         update.message.reply_text('No QR code found.')
 
-def main() -> None:
-    update_queue = asyncio.Queue()
-    updater = Updater(BOT_TOKEN, update_queue=update_queue)
-    dispatcher = updater.dispatcher
+async def main() -> None:
+    application = Application.builder().token(BOT_TOKEN).build()
 
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CallbackQueryHandler(button))
-    dispatcher.add_handler(MessageHandler(filters.PHOTO, scan_qr))
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CallbackQueryHandler(button))
+    application.add_handler(MessageHandler(filters.PHOTO, scan_qr))
 
-    updater.start_polling()
-    updater.idle()
+    await application.start_polling()
+    await application.idle()
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
