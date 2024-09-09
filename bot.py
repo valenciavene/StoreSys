@@ -1,3 +1,6 @@
+import nest_asyncio
+nest_asyncio.apply()
+
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, CallbackContext
 import telegram.ext.filters as filters
