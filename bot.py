@@ -19,7 +19,7 @@ load_dotenv()
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 async def start(update: Update, context: CallbackContext) -> None:
-    keyboard = [[InlineKeyboardButton("Scan QR Code", url='https://github.com/valenciavene/StoreSys/blob/master/templates/qr_scanner.html')]]
+    keyboard = [[InlineKeyboardButton("Scan QR Code", url='https://valenciavene.github.io/StoreSys/templates/qr_scanner.html')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text('Welcome! Please choose:', reply_markup=reply_markup)
 
