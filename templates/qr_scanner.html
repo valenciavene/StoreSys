@@ -21,7 +21,7 @@
             Telegram.WebApp.showScanQrPopup({
                 text: "Scan a QR code",
                 callback: function(data) {
-                    document.getElementById('result').innerText = `QR Code Data: ${data}`;
+                    document.getElementById('result').innerText = 'QR Code Data: ${data}';
                     // Send data to Telegram bot
                     Telegram.WebApp.sendData(data);
                 }
