@@ -19,10 +19,9 @@
 
     <script>
         function onScanSuccess(decodedText, decodedResult) {
-            // Handle the scanned code as you like, for example:
             document.getElementById('result').innerText = `QR Code Data: ${decodedText}`;
             // Send data to backend
-            fetch('/scan', {
+            fetch('http://localhost:5000/scan', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -32,11 +31,9 @@
         }
 
         function onScanError(errorMessage) {
-            // Handle scan error
             console.error(errorMessage);
         }
 
-        // Initialize the QR code scanner
         let html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", { fps: 10, qrbox: 250 });
         html5QrcodeScanner.render(onScanSuccess, onScanError);
