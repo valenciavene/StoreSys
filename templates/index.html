@@ -3,52 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Scan Bot</title>
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        #reader {
+            width: 300px;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>QR Scan Bot</h1>
-    <input type="file" accept="image/*" id="qr-input">
-    <button onclick="scanQRCode()">Scan QR Code</button>
+    <h1>QR Code Scanner</h1>
+    <div id="reader"></div>
     <p id="result"></p>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
     <script>
-        function scanQRCode() {
-            const input = document.getElementById('qr-input').files[0];
-            if (!input) {
-                alert('Please select an image file.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    context.drawImage(img, 0, 0, img.width, img.height);
-                    const imageData = context.getImageData(0, 0, img.width, img.height);
-                    const code = jsQR(imageData.data, img.width, img.height);
-                    if (code) {
-                        document.getElementById('result').innerText = `QR Code Data: ${code.data}`;
-                        // Send data to backend
-                        fetch('/scan', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ data: code.data })
-                        });
-                    } else {
-                        document.getElementById('result').innerText = 'No QR code found.';
-                    }
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(input);
+        function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById('result').innerText = `QR Code Data: ${decodedText}`;
+            // Send data to backend
+            fetch('http://localhost:5000/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: decodedText })
+            });
         }
+
+        function onScanError(errorMessage) {
+            console.error(errorMessage);
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess, onScanError);
     </script>
 </body>
 </html>
