@@ -4,33 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        #reader {
-            width: 300px;
-            margin: auto;
+        #result {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>QR Code Scanner</h1>
-    <div id="reader"></div>
+    <button id="scanButton">Scan QR Code</button>
     <p id="result"></p>
 
     <script>
-        function onScanSuccess(decodedText, decodedResult) {
-            document.getElementById('result').innerText = `QR Code Data: ${decodedText}`;
-            // Send data to Telegram bot
-            Telegram.WebApp.sendData(decodedText);
-        }
-
-        function onScanError(errorMessage) {
-            console.error(errorMessage);
-        }
-
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess, onScanError);
+        document.getElementById('scanButton').addEventListener('click', function() {
+            Telegram.WebApp.showScanQrPopup({
+                text: "Scan a QR code",
+                callback: function(data) {
+                    document.getElementById('result').innerText = `QR Code Data: ${data}`;
+                    // Send data to Telegram bot
+                    Telegram.WebApp.sendData(data);
+                }
+            });
+        });
 
         // Initialize Telegram WebApp
         Telegram.WebApp.ready();
