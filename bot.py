@@ -1,16 +1,13 @@
+
 import nest_asyncio
 nest_asyncio.apply()
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, CallbackContext
 import telegram.ext.filters as filters
-import requests
-import cv2
-import numpy as np
-from pyzbar.pyzbar import decode
-from dotenv import load_dotenv
 import os
 import asyncio
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -23,10 +20,15 @@ async def start(update: Update, context: CallbackContext) -> None:
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text('Welcome! Please choose:', reply_markup=reply_markup)
 
+async def handle_webapp_data(update: Update, context: CallbackContext) -> None:
+    data = update.message.web_app_data.data
+    await update.message.reply_text(f'QR Code Data: {data}')
+
 async def main() -> None:
     application = Application.builder().token(BOT_TOKEN).build()
 
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
 
     application.run_polling()
 
